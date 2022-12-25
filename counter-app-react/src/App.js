@@ -1,25 +1,50 @@
-import logo from './logo.svg';
-import './App.css';
+import logo from "./logo.svg";
+import "./App.css";
+import React, { Component } from "react";
+import Counters from "./components/counters";
+import NavBar from "./components/navBar";
+class App extends Component {
+  state = {
+    counters: [
+      { id: 1, value: 0 },
+      { id: 2, value: 0 },
+      { id: 3, value: 0 },
+      { id: 4, value: 100 },
+    ],
+  };
 
-function App() {
-  return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
-  );
+  handleDelete = (counterId) => {
+    // console.log("Delete invoked", counterId);
+    this.state.counters = this.state.counters.filter(
+      (entry) => entry.id != counterId
+    );
+    this.setState({ counters: this.state.counters });
+  };
+  handleIncrement = (counter) => {
+    console.log(counter);
+    counter = counter.value++;
+    this.setState({ counter: counter });
+  };
+  handleReset = () => {
+    const counters = this.state.counters.map((c) => {
+      c.value = 0;
+      return c;
+    });
+    this.setState({ counters: counters });
+  };
+  render() {
+    return <>
+      <NavBar totalCounters = {this.state.counters.filter((c)=>c.value>0).length}/>
+      <main className="container">
+        <Counters
+          counters = {this.state.counters}
+          onIncrement={this.handleIncrement}
+          onDelete={this.handleDelete}
+          onReset={this.handleReset}
+        />
+      </main>
+    </>
+  }
 }
 
 export default App;
