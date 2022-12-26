@@ -12,7 +12,15 @@ class App extends Component {
       { id: 4, value: 100 },
     ],
   };
-
+  constructor(props){
+    super(props)
+    console.log("App Constructor");
+  }
+  componentDidMount(){
+    //Ajax calls and set states
+    // this.setState({})
+    console.log("app mounted");
+  }
   handleDelete = (counterId) => {
     // console.log("Delete invoked", counterId);
     this.state.counters = this.state.counters.filter(
@@ -25,6 +33,11 @@ class App extends Component {
     counter = counter.value++;
     this.setState({ counter: counter });
   };
+  handleDecrement = (counter)=>{
+    if (counter.value>0)   counter = counter.value--;
+    
+    this.setState({counter:counter});
+  }
   handleReset = () => {
     const counters = this.state.counters.map((c) => {
       c.value = 0;
@@ -33,12 +46,14 @@ class App extends Component {
     this.setState({ counters: counters });
   };
   render() {
+    console.log("app rendered");
     return <>
       <NavBar totalCounters = {this.state.counters.filter((c)=>c.value>0).length}/>
       <main className="container">
         <Counters
           counters = {this.state.counters}
           onIncrement={this.handleIncrement}
+          onDecrement={this.handleDecrement}
           onDelete={this.handleDelete}
           onReset={this.handleReset}
         />
