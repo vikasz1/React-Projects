@@ -73,6 +73,7 @@ const movies = [
     dailyRentalRate: 3.5,
 
   },
+  
 ];
 export function getMovies() {
   return movies;
