@@ -7,7 +7,7 @@ const NavBar = (props) => {
         Vidly
       </Link>
 
-      <div class="collapse navbar-collapse" id="navbarSupportedContent">
+      <div className="collapse navbar-collapse" id="navbarSupportedContent">
         <div className="navbar-nav">
           <NavLink className="nav-item nav-link" to="/movies">
             Movies

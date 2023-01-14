@@ -1,14 +1,16 @@
 import React, { Component } from "react";
 import "../services/fakeMovieService";
-import { getMovies } from "../services/fakeMovieService";
+import { deleteMovie, getMovies } from "../services/movieService";
 import Pagination from "./common/pagination";
+import { toast } from "react-toastify";
 import { paginate } from "../utils/paginate";
 import ListGroup from "./common/listGroup";
-import { getGenres } from "../services/fakeGenreService";
-import _, { filter } from "lodash";
+import { getGenres } from "../services/genreService";
+import _ from "lodash";
 import MoviesTable from "./moviesTable";
 import { Link } from "react-router-dom";
 import SearchBox from "./common/searchBox";
+
 
 class Movies extends Component {
   state = {
@@ -20,13 +22,24 @@ class Movies extends Component {
     selectedGenre: null,
     sortColumn: { path: "title", order: "asc" },
   };
-  componentDidMount() {
-    const genres = [{ name: "All Genre", _id: "xyz" }, ...getGenres()];
-    this.setState({ movies: getMovies(), genres: genres });
+  async componentDidMount() {
+    const { data } = await getGenres();
+    const genres = [{ name: "All Genre", _id: "xyz" }, ...data];
+    const { data: movies } = await getMovies();
+    this.setState({ movies, genres });
   }
-  handleDelete = (movie) => {
-    const movies = this.state.movies.filter((entry) => entry._id !== movie._id);
+  handleDelete = async (movie) => {
+    const originalMovies = this.state.movies;
+    const movies = originalMovies.filter((entry) => entry._id !== movie._id);
     this.setState({ movies: movies });
+    try {
+      await deleteMovie(movie._id);
+    } catch (ex) {
+      if (ex.response && ex.response.status === 404)
+        toast.error("Movie not found");
+
+      this.setState({ movies: originalMovies });
+    }
   };
   handleLike = (movie) => {
     console.log(this.state.movies);
@@ -83,7 +96,7 @@ class Movies extends Component {
     } = this.state;
 
     const filtered =
-      selectedGenre && selectedGenre._id !== "xyz"
+      selectedGenre && selectedGenre._id
         ? allMovies.filter((m) => m.genre._id === selectedGenre._id)
         : allMovies;
     const sorted = _.orderBy(filtered, [sortColumn.path], [sortColumn.order]);
