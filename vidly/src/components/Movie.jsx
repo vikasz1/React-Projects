@@ -1,5 +1,4 @@
 import React, { Component } from "react";
-import "../services/fakeMovieService";
 import { deleteMovie, getMovies } from "../services/movieService";
 import Pagination from "./common/pagination";
 import { toast } from "react-toastify";
@@ -86,6 +85,7 @@ class Movies extends Component {
     return { totalCount: filtered.length, data: [...movies], sorted };
   };
   render() {
+
     const { length: totalCount } = this.state.movies;
     const {
       pageSize,
@@ -94,7 +94,7 @@ class Movies extends Component {
       movies: allMovies,
       sortColumn,
     } = this.state;
-
+    const {user} = this.props;
     const filtered =
       selectedGenre && selectedGenre._id
         ? allMovies.filter((m) => m.genre._id === selectedGenre._id)
@@ -116,13 +116,14 @@ class Movies extends Component {
           />
         </div>
         <div className="col">
-          <Link
+          {user && <Link
             to="/movies/new"
             className="btn btn-primary"
             style={{ marginBottom: 20 }}
           >
             New Movie
-          </Link>
+          </Link>}
+          {console.log(user)}
 
           <p>Showing {totalCount} movies in the database.</p>
           <SearchBox
